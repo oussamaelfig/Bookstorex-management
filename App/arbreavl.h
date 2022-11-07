@@ -81,9 +81,14 @@ private:
 	/**** N'oubliez d'expliquer son fonctionnement en commentaire *******************/
 	/**** Ça s'applique également sur les attributs privés de le classe Itérateur ***/
 
-	void rightRotate(Noeud *y)
+	bool inserer(Noeud *&n, const T &e);
+	// Une fonction d'utilité à droite
+	// Faire tourner le sous-arbre enraciné avec y
+	void rotationDroiteGauche(Noeud *& B);
 
-
+	// Une fonction utilitaire à gauche
+	// faire tourner le sous-arbre enraciné avec x
+	void rotationGaucheDroite(Noeud *& B);
 
 	/*
 	 * Ces fonctions sont implémentées à des fins de test.
@@ -134,20 +139,18 @@ ArbreAVL<T>::ArbreAVL(const ArbreAVL<T> &autre) : racine(nullptr)
 template <class T>
 ArbreAVL<T>::~ArbreAVL()
 {
-	// À compléter
+	vider();
 }
 
 template <class T>
 bool ArbreAVL<T>::vide() const
 {
-	// À compléter
-	return false;
+	return racine == NULL;
 }
 
 template <class T>
 void ArbreAVL<T>::vider()
 {
-	// À compléter
 }
 
 template <class T>
@@ -157,78 +160,82 @@ bool ArbreAVL<T>::contient(const T &element) const
 	return false;
 }
 
-
-
-// A utility function to right
-// rotate subtree rooted with y
-// See the diagram given above.
 template <class T>
-void ArbreAVL<T>::rightRotate(Noeud *y)
+void ArbreAVL<T>::rotationDroiteGauche(Noeud *&B){
+	Noeud *temp = B->droite;
+	int eb = temp->equilibre, ec = B->equilibre;
+	int nec = -eb - (eb < 0 ? -eb : 0) - 1 + ec;
+	int neb = eb - (nec < 0 ? -nec : 0) - 1;
+	temp->equilibre = neb;
+	B->equilibre = nec;
+	B->gauche = temp->droite; 
+	temp->droite = B;
+	B = temp;
+}
+
+template <class T>
+void ArbreAVL<T>::rotationGaucheDroite(Noeud *&B)
 {
-    Noeud *x = y->gauche;
-    Noeud *T2 = x->droite;
- 
-    // Perform rotation
-    x->droite = y;
-    y->guach = T2;
- 
-    // Update heights
-    y->height = max(height(y->left),
-                    height(y->right)) + 1;
-    x->height = max(height(x->left),
-                    height(x->right)) + 1;
- 
-    // Return new root
-    return x;
+	Noeud *temp = B->gauche;
+	int eb = temp->equilibre, ec = B->equilibre;
+	int nec = -eb - (eb < 0 ? -eb : 0) - 1 + ec;
+	int neb = eb - (nec < 0 ? -nec : 0) - 1;
+	temp->equilibre = neb;
+	B->equilibre = nec;
+	B->gauche = temp->droite;
+	temp->droite = B;
+	B = temp;
+}
+
+template <class T>
+bool ArbreAVL<T>::inserer(Noeud *&n, const T &e)
+{
+	if (n == NULL)
+	{
+		n = new Noeud(e);
+		return true;
+	}
+	if (e < n->contenu)
+	{
+		if (inserer(n->gauche, e))
+		{ // cas gauche
+			n->equilibre++;
+			if (n->equilibre == 0)
+				return false;
+			if (n->equilibre == 1)
+				return true;
+			if (n->gauche->equilibre == -1)
+				rotationDroiteGauche(n->gauche);
+			rotationGaucheDroite(n);
+		}
+		return false;
+	}
+	else if (n->contenu < e)
+	{
+		if (inserer(n->droite, e))
+		{ // cas gauche
+			n->equilibre++;
+			if (n->equilibre == 0)
+				return false;
+			if (n->equilibre == 1)
+				return true;
+			if (n->droite->equilibre == -1)
+				rotationGaucheDroite(n->gauche);
+			rotationDroiteGauche(n);
+		}
+		return false;
+	}
+	else
+	{ // e == n->element
+		n->element = e;
+		return false;
+	}
 }
 
 template <class T>
 void ArbreAVL<T>::inserer(const T &e)
 {
-	/* 1. Perform the normal BST insertion */
-	if (racine == NULL)
-	{
-		new Noeud(e);
-		return true;
-	}
-
-	if (e < racine->contenu)
-		racine->gauche = inserer(racine->gauche, e);
-	else if (e > racine->contenu)
-		racine->droite = insert(racine->droite, e);
-
-	/* 3. Get the balance factor of this ancestor
-		racine to check whether this racine became
-		unbalanced */
-	int balance = racine->equilibre;
-
-	// If this racine becomes unbalanced, then
-	// there are 4 cases
-
-	// Left Left Case
-	if (balance > 1 && e < racine->gauche->contenu)
-		return rightRotate(racine);
-
-	// Right Right Case
-	if (balance < -1 && key > racine->droite->contenu)
-		return leftRotate(racine);
-
-	// Left Right Case
-	if (balance > 1 && key > racine->left->key)
-	{
-		racine->left = leftRotate(racine->left);
-		return rightRotate(racine);
-	}
-
-	// Right Left Case
-	if (balance < -1 && key < racine->right->key)
-	{
-		racine->right = rightRotate(racine->right);
-		return leftRotate(racine);
-	}
-
-	/* return the (unchanged) racine pointer */
-	return racine;
+	inserer(racine, e);
 }
 
 template <class T>
