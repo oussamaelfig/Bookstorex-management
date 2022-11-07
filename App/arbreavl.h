@@ -162,15 +162,17 @@ bool ArbreAVL<T>::contient(const T &element) const
 
 template <class T>
 void ArbreAVL<T>::rotationDroiteGauche(Noeud *&B){
-	Noeud *temp = B->droite;
-	int eb = temp->equilibre, ec = B->equilibre;
-	int nec = -eb - (eb < 0 ? -eb : 0) - 1 + ec;
-	int neb = eb - (nec < 0 ? -nec : 0) - 1;
-	temp->equilibre = neb;
-	B->equilibre = nec;
-	B->gauche = temp->droite; 
-	temp->droite = B;
-	B = temp;
+	 Noeud *temp = B->droite;
+    int eb = temp->equilibre;
+    int ea = B->equilibre;
+    int nea = -(eb < 0 ? eb : 0) + 1 + ea;
+    int neb = (nea < 0 ? nea : 0) + 1 + eb;
+
+    temp->equilibre = nea;
+    B->equilibre = neb;
+    B->droite = temp->gauche;
+    temp->gauche = B;
+    B = temp;
 }
 
 template <class T>
