@@ -216,12 +216,12 @@ bool ArbreAVL<T>::inserer(Noeud *&n, const T &e)
 	{
 		if (inserer(n->droite, e))
 		{ //cas droite
-			n->equilibre++;
+			n->equilibre--;
 			if (n->equilibre == 0)
 				return false;
-			if (n->equilibre == 1)
+			if (n->equilibre == -1)
 				return true;
-			if (n->droite->equilibre == -1)
+			if (n->droite->equilibre == 1)
 				rotationGaucheDroite(n->droite);
 			rotationDroiteGauche(n);
 		}
