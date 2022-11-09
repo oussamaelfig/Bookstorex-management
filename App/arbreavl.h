@@ -82,6 +82,7 @@ private:
 	/**** Ça s'applique également sur les attributs privés de le classe Itérateur ***/
 	Noeud *courant;
 	Pile<Noeud *> chemin;
+	const ArbreAVL &arbre_associe;
 
 	bool inserer(Noeud *&n, const T &e);
 	// Une fonction d'utilité à droite
@@ -91,6 +92,9 @@ private:
 	// Une fonction utilitaire à gauche
 	// faire tourner le sous-arbre enraciné avec x
 	void rotationGaucheDroite(Noeud *&B);
+
+	// copier un noeud vers un autre noeud
+	void copier(const Noeud *, Noeud *&) const;
 
 	/*
 	 * Ces fonctions sont implémentées à des fins de test.
@@ -252,7 +256,12 @@ void ArbreAVL<T>::enlever(const T &e)
 template <class T>
 ArbreAVL<T> &ArbreAVL<T>::operator=(const ArbreAVL &autre)
 {
-	// À compléter
+	if (this == &autre)
+	{
+		return *this;
+	}
+	vider();
+	copier(autre.racine, racine);
 	return *this;
 }
 
@@ -266,22 +275,47 @@ bool ArbreAVL<T>::operator==(const ArbreAVL<T> &autre) const
 template <class T>
 typename ArbreAVL<T>::Iterateur ArbreAVL<T>::debut() const
 {
-	// À compléter
+	Iterateur iter(*this);
+	iter.courant = racine;
+	if (iter.courant != nullptr)
+	{
+		while (iter.courant->gauche != nullptr)
+		{
+			iter.chemin.empiler(iter.courant);
+			iter.courant = iter.courant->gauche;
+		}
+	}
+	return iter;
 }
 
 template <class T>
 T &ArbreAVL<T>::operator[](const Iterateur &i)
 {
-	// À compléter
+	assert(&i.arbre_associe == this);
+	assert(i.courant);
+	return i.courant->contenu;
 }
 
 template <class T>
 const T &ArbreAVL<T>::operator[](const Iterateur &i) const
 {
-	// À compléter
+	assert(&i.arbre_associe == this);
+	assert(i.courant);
+	return i.courant->contenu;
 }
 
 /************ Fonctions privées ***************/
+
+template <class T>
+void ArbreAVL<T>::copier(const Noeud *source, Noeud *&noeud) const
+{
+	if (source != nullptr)
+	{
+		noeud = new Noeud(source->contenu);
+		copier(source->gauche, noeud->gauche);
+		copier(source->droite, noeud->droite);
+	}
+}
 
 /************ Iterateur ***************/
 
@@ -298,7 +332,9 @@ ArbreAVL<T>::Iterateur::Iterateur(const Iterateur &i) : arbre_associe(i.arbre_as
 template <class T>
 typename ArbreAVL<T>::Iterateur ArbreAVL<T>::Iterateur::operator++(int)
 {
-	// À compléter
+	Iterateur copie(*this);
+	operator++();
+	return copie;
 }
 
 template <class T>
