@@ -83,27 +83,35 @@ Livre::Livre(unsigned long i = 0, std::string a = "", std::string t = "", int s 
 Livre::Livre(std::string &ligne)
 {
 	std::string data[4];
-	std::stringstream ss(ligne);
+	std::string s = ligne;
+	std::string delimiter = ";";
 
-	for (int i; ss >> i;)
+	size_t pos = 0;
+	std::string token;
+	int i = 0;
+	while ((pos = s.find(delimiter)) != std::string::npos)
 	{
-		data[i] = i;
-		if (ss.peek() == ';')
-			ss.ignore();
+		token = s.substr(0, pos);
+		data[i] = token;
+		i++;
+		// std::cout << token << std::endl;
+		s.erase(0, pos + delimiter.length());
 	}
 
-	isbn = std::stoi(data[0]);
-	auteur = data[1];
-	titre = data[2];
+	data[3] = s;
+
+	isbn = std::stoul(data[1]);
+	auteur = data[2];
+	titre = data[0];
 	total = std::stoi(data[3]);
 }
 
 Livre::Livre(const Livre &l)
 {
-	isbn=l.isbn;
-	auteur=l.auteur;
-	titre=l.titre;
-	total=l.total;
+	isbn = l.isbn;
+	auteur = l.auteur;
+	titre = l.titre;
+	total = l.total;
 }
 
 Livre::~Livre()
@@ -117,37 +125,42 @@ int Livre::copies() const
 
 Livre &Livre::operator=(const Livre &autre)
 {
-	if(isbn=autre.isbn){
-		this->total+=autre.total;
-		this->auteur=autre.auteur;
-		this->titre=autre.titre;
-	}else{
-		this->isbn=autre.isbn;
-		this->auteur=autre.auteur;
-		this->total=autre.total;
-		this->titre=autre.titre;
+	if(this == &autre)
+        return *this;
+	if ((this->isbn == autre.isbn))
+	{
+		this->total += autre.total;
+		this->auteur = autre.auteur;
+		this->titre = autre.titre;
+	}
+	else
+	{
+		this->isbn = autre.isbn;
+		this->auteur = autre.auteur;
+		this->total = autre.total;
+		this->titre = autre.titre;
 	}
 	return *this;
 }
 
 bool Livre::operator==(const Livre &autre) const
 {
-	return this->isbn==autre.isbn;
+	return this->isbn == autre.isbn;
 }
 
 bool Livre::operator!=(const Livre &autre) const
 {
-	return this->isbn!=autre.isbn;
+	return this->isbn != autre.isbn;
 }
 
 bool Livre::operator<(const Livre &autre) const
 {
-	return this->isbn<autre.isbn;
+	return this->isbn < autre.isbn;
 }
 
 bool Livre::operator>(const Livre &autre) const
 {
-	return this->isbn>autre.isbn;
+	return this->isbn > autre.isbn;
 }
 
 std::ostream &operator<<(std::ostream &os, const Livre &l)

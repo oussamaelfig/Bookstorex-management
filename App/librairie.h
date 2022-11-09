@@ -71,21 +71,26 @@ Librairie::~Librairie() {
 }
 
 Librairie & Librairie::operator = (const Librairie & autre) {
-	// À compléter
+	(*this)=autre;
 	return * this;
 }
 
 void Librairie::inserer(Livre & l) {
-	// À compléter
+	assert(l!=NULL);
+	if(!lib.contient(l)){
+		lib.inserer(l);
+	}else{
+
+	}
 }
 
 bool Librairie::contient(const Livre & l) const {
-	// À compléter
-	return false;
+	
+	return lib.contient(l);
 }
 
 int Librairie::total(Livre & l) const {
-	// À compléter
+	
 	return 0;
 }
 
@@ -100,8 +105,8 @@ void Librairie::fusionner(Librairie & bib) {
 }
 
 bool Librairie::operator == (const Librairie & autre) const {
-	// À compléter
-  return false;
+
+  return (*this)==autre;
 }
 
 #endif
