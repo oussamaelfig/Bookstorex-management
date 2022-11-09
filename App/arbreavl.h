@@ -80,15 +80,17 @@ private:
 	/**** Vous pouvez ajouter toute fonction privée nécessaire **********************/
 	/**** N'oubliez d'expliquer son fonctionnement en commentaire *******************/
 	/**** Ça s'applique également sur les attributs privés de le classe Itérateur ***/
+	Noeud *courant;
+	Pile<Noeud *> chemin;
 
 	bool inserer(Noeud *&n, const T &e);
 	// Une fonction d'utilité à droite
 	// Faire tourner le sous-arbre enraciné avec y
-	void rotationDroiteGauche(Noeud *& B);
+	void rotationDroiteGauche(Noeud *&B);
 
 	// Une fonction utilitaire à gauche
 	// faire tourner le sous-arbre enraciné avec x
-	void rotationGaucheDroite(Noeud *& B);
+	void rotationGaucheDroite(Noeud *&B);
 
 	/*
 	 * Ces fonctions sont implémentées à des fins de test.
@@ -161,18 +163,19 @@ bool ArbreAVL<T>::contient(const T &element) const
 }
 
 template <class T>
-void ArbreAVL<T>::rotationDroiteGauche(Noeud *&B){
-	 Noeud *temp = B->droite;
-    int eb = temp->equilibre;
-    int ea = B->equilibre;
-    int nea = -(eb < 0 ? eb : 0) + 1 + ea;
-    int neb = (nea < 0 ? nea : 0) + 1 + eb;
+void ArbreAVL<T>::rotationDroiteGauche(Noeud *&B)
+{
+	Noeud *temp = B->droite;
+	int eb = temp->equilibre;
+	int ea = B->equilibre;
+	int nea = -(eb < 0 ? eb : 0) + 1 + ea;
+	int neb = (nea < 0 ? nea : 0) + 1 + eb;
 
-    temp->equilibre = nea;
-    B->equilibre = neb;
-    B->droite = temp->gauche;
-    temp->gauche = B;
-    B = temp;
+	temp->equilibre = nea;
+	B->equilibre = neb;
+	B->droite = temp->gauche;
+	temp->gauche = B;
+	B = temp;
 }
 
 template <class T>
@@ -215,7 +218,7 @@ bool ArbreAVL<T>::inserer(Noeud *&n, const T &e)
 	else if (n->contenu < e)
 	{
 		if (inserer(n->droite, e))
-		{ //cas droite
+		{ // cas droite
 			n->equilibre--;
 			if (n->equilibre == 0)
 				return false;
@@ -296,21 +299,29 @@ template <class T>
 typename ArbreAVL<T>::Iterateur ArbreAVL<T>::Iterateur::operator++(int)
 {
 	// À compléter
-	return *this;
 }
 
 template <class T>
 typename ArbreAVL<T>::Iterateur &ArbreAVL<T>::Iterateur::operator++()
 {
-	// À compléter
+	assert(courant);
+	Noeud *suivant = courant->droite;
+	while (suivant)
+	{
+		chemin.empiler(suivant);
+		suivant = suivant->gauche;
+	}
+	if (!chemin.vide())
+		courant = chemin.depiler();
+	else
+		courant = nullptr;
 	return *this;
 }
 
 template <class T>
 ArbreAVL<T>::Iterateur::operator bool() const
 {
-	// À compléter
-	return false;
+	return courant != nullptr;
 }
 
 /************ Fonctions de tests ***************/
