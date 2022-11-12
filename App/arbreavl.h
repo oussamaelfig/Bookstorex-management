@@ -84,6 +84,8 @@ private:
 	Pile<Noeud *> chemin;
 	const ArbreAVL &arbre_associe;
 
+	bool enlever(Noeud *&noeud, const T &element);
+
 	bool inserer(Noeud *&n, const T &e);
 	// Une fonction d'utilité à droite
 	// Faire tourner le sous-arbre enraciné avec y
