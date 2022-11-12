@@ -84,6 +84,7 @@ private:
 	Pile<Noeud *> chemin;
 	const ArbreAVL &arbre_associe;
 
+	// Fonction recusrsive qui enleve les noeuds desires et les reorganise.
 	bool enlever(Noeud *&noeud, const T &element);
 
 	bool inserer(Noeud *&n, const T &e);
@@ -172,30 +173,33 @@ template <class T>
 void ArbreAVL<T>::rotationDroiteGauche(Noeud *&B)
 {
 	Noeud *temp = B->droite;
-	int eb = temp->equilibre;
-	int ea = B->equilibre;
-	int nea = -(eb < 0 ? eb : 0) + 1 + ea;
-	int neb = (nea < 0 ? nea : 0) + 1 + eb;
+    int eb = temp->equilibre;
+    int ea = B->equilibre;
+    int nea = -(eb < 0 ? eb : 0) + 1 + ea;
+    int neb = (nea > 0 ? nea : 0) + 1 + eb;
 
-	temp->equilibre = nea;
-	B->equilibre = neb;
-	B->droite = temp->gauche;
-	temp->gauche = B;
-	B = temp;
+    temp->equilibre = neb;
+    B->equilibre = nea;
+    B->droite = temp->gauche;
+    temp->gauche = B;
+    B = temp;
 }
 
 template <class T>
 void ArbreAVL<T>::rotationGaucheDroite(Noeud *&B)
 {
-	Noeud *temp = B->gauche;
-	int eb = temp->equilibre, ec = B->equilibre;
-	int nec = -eb - (eb < 0 ? -eb : 0) - 1 + ec;
-	int neb = eb - (nec < 0 ? -nec : 0) - 1;
-	temp->equilibre = neb;
-	B->equilibre = nec;
-	B->gauche = temp->droite;
-	temp->droite = B;
-	B = temp;
+ 	Noeud *a = B->gauche;
+    Noeud *b = B;
+    int ea = a->equilibre;
+    int eb = b->equilibre;
+    int neb = -(ea > 0 ? ea : 0) - 1 + eb;
+    int nea = ea + (neb < 0 ? neb : 0) - 1;
+
+    a->equilibre = nea;
+    b->equilibre = neb;
+    b->gauche = a->droite;
+    a->droite = b;
+    B = a;
 }
 
 template <class T>
@@ -237,8 +241,8 @@ bool ArbreAVL<T>::inserer(Noeud *&n, const T &e)
 		return false;
 	}
 	else
-	{ // e == n->element
-		n->element = e;
+	{ // e == n->contenu
+		n->contenu = e;
 		return false;
 	}
 }
@@ -252,8 +256,84 @@ void ArbreAVL<T>::inserer(const T &e)
 template <class T>
 void ArbreAVL<T>::enlever(const T &e)
 {
-	// À compléter
+	enlever(racine, e);
 }
+
+template <class T>
+bool ArbreAVL<T>::enlever(Noeud *&noeud, const T &element)
+{
+    if (noeud == nullptr)
+    {
+        return false;
+    }
+    if (element < noeud->contenu)
+    {
+         bool retour = false;
+        if (enlever(noeud->gauche, element))
+        {
+            noeud->equilibre--;
+            if (noeud->equilibre == 0)
+                return true;
+            if (noeud->equilibre == -1)
+                return false;
+            retour = noeud->droite->equilibre != 0;
+            assert(noeud->equilibre == -2);
+            if (noeud->droite->equilibre == 1)
+            {
+                rotationGaucheDroite(noeud->droite);
+            }
+            rotationDroiteGauche(noeud);
+        }
+        return retour;
+    }
+    else if (element > noeud->contenu)
+    {
+         bool retour = false;
+        if (enlever(noeud->droite, element))
+        {
+            noeud->equilibre++;
+            if (noeud->equilibre == 0)
+                return true;
+            if (noeud->equilibre == 1)
+                return false;
+            retour = noeud->gauche->equilibre != 0;
+            assert(noeud->equilibre == 2);
+            if (noeud->gauche->equilibre == -1)
+                rotationDroiteGauche(noeud->gauche);
+            rotationGaucheDroite(noeud);
+        }
+        return retour;
+    }
+    else // if(element == noeud->contenu)
+    {
+        Noeud *temp = noeud;
+        if (noeud->gauche == NULL)
+        {
+            noeud = noeud->droite;
+            delete temp;
+            return true;
+        }
+        if (noeud->droite == NULL)
+        {
+            noeud = noeud->gauche;
+            delete temp;
+            return true;
+        }
+        temp = noeud->gauche;
+        while (true)
+        {
+            if (temp->droite == nullptr)
+            {
+                break;
+            }
+            temp = temp->droite;
+        }
+        noeud->contenu = temp->contenu;
+        noeud = temp;
+        return enlever(noeud->gauche, noeud->contenu);
+    }
+}
+
 
 template <class T>
 ArbreAVL<T> &ArbreAVL<T>::operator=(const ArbreAVL &autre)
