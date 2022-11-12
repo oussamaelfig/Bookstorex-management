@@ -80,9 +80,6 @@ private:
 	/**** Vous pouvez ajouter toute fonction privée nécessaire **********************/
 	/**** N'oubliez d'expliquer son fonctionnement en commentaire *******************/
 	/**** Ça s'applique également sur les attributs privés de le classe Itérateur ***/
-	Noeud *courant;
-	Pile<Noeud *> chemin;
-	const ArbreAVL &arbre_associe;
 
 	// Fonction recusrsive qui enleve les noeuds desires et les reorganise.
 	bool enlever(Noeud *&noeud, const T &element);
@@ -142,7 +139,7 @@ ArbreAVL<T>::ArbreAVL() : racine(nullptr)
 template <class T>
 ArbreAVL<T>::ArbreAVL(const ArbreAVL<T> &autre) : racine(nullptr)
 {
-	// À compléter
+	copier(autre.racine, racine);
 }
 
 template <class T>
@@ -165,8 +162,20 @@ void ArbreAVL<T>::vider()
 template <class T>
 bool ArbreAVL<T>::contient(const T &element) const
 {
-	// À compléter
-	return false;
+	 bool est_dans_larbre = false;
+    if (racine) {
+        Noeud* temp = racine;
+        while (temp != NULL && !est_dans_larbre) {
+            if (temp->contenu == element) {
+                est_dans_larbre = true;
+            } else if (temp->contenu < element) {
+                temp = temp->droite;
+            } else {
+                temp = temp->gauche;
+            }
+        }
+    }
+    return est_dans_larbre;
 }
 
 template <class T>
