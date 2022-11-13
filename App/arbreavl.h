@@ -151,7 +151,7 @@ ArbreAVL<T>::~ArbreAVL()
 template <class T>
 bool ArbreAVL<T>::vide() const
 {
-	return racine == NULL;
+	return racine == nullptr;
 }
 
 template <class T>
@@ -165,7 +165,7 @@ bool ArbreAVL<T>::contient(const T &element) const
 	bool est_dans_larbre = false;
 	if (racine != nullptr) {
         Noeud* temp = racine;
-        while (temp != NULL && !est_dans_larbre) {
+        while (temp != nullptr && !est_dans_larbre) {
             if (temp->contenu == element) {
                 est_dans_larbre = true;
             } else if (temp->contenu < element) {
@@ -214,7 +214,7 @@ void ArbreAVL<T>::rotationGaucheDroite(Noeud *&B)
 template <class T>
 bool ArbreAVL<T>::inserer(Noeud *&n, const T &e)
 {
-	if (n == NULL)
+	if (n == nullptr)
 	{
 		n = new Noeud(e);
 		return true;
@@ -316,13 +316,13 @@ bool ArbreAVL<T>::enlever(Noeud *&noeud, const T &element)
     else // if(element == noeud->contenu)
     {
         Noeud *temp = noeud;
-        if (noeud->gauche == NULL)
+        if (noeud->gauche == nullptr)
         {
             noeud = noeud->droite;
             delete temp;
             return true;
         }
-        if (noeud->droite == NULL)
+        if (noeud->droite == nullptr)
         {
             noeud = noeud->gauche;
             delete temp;
