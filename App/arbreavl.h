@@ -162,8 +162,8 @@ void ArbreAVL<T>::vider()
 template <class T>
 bool ArbreAVL<T>::contient(const T &element) const
 {
-	 bool est_dans_larbre = false;
-    if (racine) {
+	bool est_dans_larbre = false;
+	if (racine != nullptr) {
         Noeud* temp = racine;
         while (temp != NULL && !est_dans_larbre) {
             if (temp->contenu == element) {
@@ -359,7 +359,23 @@ ArbreAVL<T> &ArbreAVL<T>::operator=(const ArbreAVL &autre)
 template <class T>
 bool ArbreAVL<T>::operator==(const ArbreAVL<T> &autre) const
 {
-	// À compléter
+	Iterateur iter1(*this);
+	iter1 = debut();
+	Iterateur iter2(autre);
+	iter2 = debut();
+	while (iter1 && iter2)
+	{
+		if(iter1.courant != iter2.courant)
+		{
+			return false;
+		}
+		iter1++;
+		iter2++;
+	}
+	if(iter1.courant == nullptr && iter2.courant ==nullptr)
+	{
+		return true;
+	}
 	return false;
 }
 
