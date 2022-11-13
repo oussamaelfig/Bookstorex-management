@@ -76,28 +76,36 @@ Librairie & Librairie::operator = (const Librairie & autre) {
 }
 
 void Librairie::inserer(Livre & l) {
-	assert(l!=NULL);
-	if(!lib.contient(l)){
-		lib.inserer(l);
-	}else{
-
-	}
+	lib.inserer(l);
 }
 
 bool Librairie::contient(const Livre & l) const {
-	
 	return lib.contient(l);
 }
 
 int Librairie::total(Livre & l) const {
-	
+	if(lib.contient(l))
+	{
+		//voir avec test si c'est ce qui est attendu ou total de l'arbre.
+		return l.copies();
+	}
 	return 0;
 }
 
 Livre Librairie::trouver(unsigned long l) const {
-	Livre livre;
-	// À compléter
-	return livre;
+	Livre livre1(l);
+	Livre livre2;
+	/*ArbreAVL<Livre>::Iterateur iter(lib);
+	iter = lib.debut(); //erreur weird
+	while (iter)
+	{
+		if(livre1 == lib[iter])
+		{
+			return lib[iter];
+		}
+		iter++;
+	}*/
+	return livre2;
 }
 
 void Librairie::fusionner(Librairie & bib) {
