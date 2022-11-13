@@ -96,6 +96,9 @@ private:
 	// copier un noeud vers un autre noeud
 	void copier(const Noeud *, Noeud *&) const;
 
+	// vide l'arbre AVL de tous ses noeuds.
+	void vider(Noeud *&noeud);
+
 	/*
 	 * Ces fonctions sont implémentées à des fins de test.
 	 * Vous ne devez pas les utiliser dans vos implémentations, ni les modifier!
@@ -157,6 +160,26 @@ bool ArbreAVL<T>::vide() const
 template <class T>
 void ArbreAVL<T>::vider()
 {
+	vider(racine);
+}
+
+template <class T>
+void ArbreAVL<T>::vider(Noeud *&noeud)
+{
+    if (noeud == nullptr)
+    {
+        return;
+    }
+    if (noeud->gauche != nullptr)
+    {
+        vider(noeud->gauche);
+    }
+    if (noeud->droite != nullptr)
+    {
+        vider(noeud->droite);
+    }
+    delete noeud;
+    noeud = nullptr;
 }
 
 template <class T>
