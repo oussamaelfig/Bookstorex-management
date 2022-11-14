@@ -74,7 +74,6 @@ Librairie & Librairie::operator = (const Librairie & autre) {
 	if(autre == *this){
 		return *this;
 	}
-	lib.vider();
 	lib = autre.lib;
 	return *this;
 }
