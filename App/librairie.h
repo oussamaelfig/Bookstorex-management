@@ -123,9 +123,7 @@ void Librairie::fusionner(Librairie & bib) {
 }
 
 bool Librairie::operator == (const Librairie & autre) const {
-	if(autre == (*this))
-		return true;
-	else if(autre.lib == lib)
+	if(autre.lib == lib)
 	{
 		return true;
 	}
