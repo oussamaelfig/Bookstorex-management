@@ -393,7 +393,7 @@ bool ArbreAVL<T>::operator==(const ArbreAVL<T> &autre) const
 		iter1++;
 		iter2++;
 	}
-	if(iter1 == nullptr && iter2 == nullptr)
+	if(!iter1 && !iter2)
 	{
 		return true;
 	}
