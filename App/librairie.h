@@ -71,8 +71,12 @@ Librairie::~Librairie() {
 }
 
 Librairie & Librairie::operator = (const Librairie & autre) {
-	(*this)=autre;
-	return * this;
+	if(autre == *this){
+		return *this;
+	}
+	lib.vider();
+	lib = autre.lib;
+	return *this;
 }
 
 void Librairie::inserer(Livre & l) {
