@@ -164,25 +164,6 @@ void ArbreAVL<T>::vider()
 }
 
 template <class T>
-void ArbreAVL<T>::vider(Noeud *&noeud)
-{
-    if (noeud == nullptr)
-    {
-        return;
-    }
-    if (noeud->gauche != nullptr)
-    {
-        vider(noeud->gauche);
-    }
-    if (noeud->droite != nullptr)
-    {
-        vider(noeud->droite);
-    }
-    delete noeud;
-    noeud = nullptr;
-}
-
-template <class T>
 bool ArbreAVL<T>::contient(const T &element) const
 {
 	bool est_dans_larbre = false;
@@ -202,36 +183,111 @@ bool ArbreAVL<T>::contient(const T &element) const
 }
 
 template <class T>
-void ArbreAVL<T>::rotationDroiteGauche(Noeud *&B)
+void ArbreAVL<T>::inserer(const T &e)
 {
-	Noeud *temp = B->droite;
-    int eb = temp->equilibre;
-    int ea = B->equilibre;
-    int nea = -(eb < 0 ? eb : 0) + 1 + ea;
-    int neb = (nea > 0 ? nea : 0) + 1 + eb;
-
-    temp->equilibre = neb;
-    B->equilibre = nea;
-    B->droite = temp->gauche;
-    temp->gauche = B;
-    B = temp;
+	inserer(racine, e);
 }
 
 template <class T>
-void ArbreAVL<T>::rotationGaucheDroite(Noeud *&B)
+void ArbreAVL<T>::enlever(const T &e)
 {
- 	Noeud *a = B->gauche;
-    Noeud *b = B;
-    int ea = a->equilibre;
-    int eb = b->equilibre;
-    int neb = -(ea > 0 ? ea : 0) - 1 + eb;
-    int nea = ea + (neb < 0 ? neb : 0) - 1;
+	enlever(racine, e);
+}
 
-    a->equilibre = nea;
-    b->equilibre = neb;
-    b->gauche = a->droite;
-    a->droite = b;
-    B = a;
+template <class T>
+ArbreAVL<T> &ArbreAVL<T>::operator=(const ArbreAVL &autre)
+{
+	if (this == &autre)
+	{
+		return *this;
+	}
+	vider();
+	copier(autre.racine, racine);
+	return *this;
+}
+
+template <class T>
+bool ArbreAVL<T>::operator==(const ArbreAVL<T> &autre) const
+{
+	Iterateur iter1(this->debut());
+	Iterateur iter2(autre.debut());
+	while (iter1 && iter2)
+	{
+		if((*this)[iter1] != autre[iter2])
+		{
+			return false;
+		}
+		iter1++;
+		iter2++;
+	}
+	if(!iter1 && !iter2)
+	{
+		return true;
+	}
+	return false;
+}
+
+template <class T>
+typename ArbreAVL<T>::Iterateur ArbreAVL<T>::debut() const
+{
+	Iterateur iter(*this);
+	iter.courant = racine;
+	if (iter.courant != nullptr)
+	{
+		while (iter.courant->gauche != nullptr)
+		{
+			iter.chemin.empiler(iter.courant);
+			iter.courant = iter.courant->gauche;
+		}
+	}
+	return iter;
+}
+
+template <class T>
+T &ArbreAVL<T>::operator[](const Iterateur &i)
+{
+	assert(&i.arbre_associe == this);
+	assert(i.courant);
+	return i.courant->contenu;
+}
+
+template <class T>
+const T &ArbreAVL<T>::operator[](const Iterateur &i) const
+{
+	assert(&i.arbre_associe == this);
+	assert(i.courant);
+	return i.courant->contenu;
+}
+
+/************ Fonctions privées ***************/
+template <class T>
+void ArbreAVL<T>::vider(Noeud *&noeud)
+{
+    if (noeud == nullptr)
+    {
+        return;
+    }
+    if (noeud->gauche != nullptr)
+    {
+        vider(noeud->gauche);
+    }
+    if (noeud->droite != nullptr)
+    {
+        vider(noeud->droite);
+    }
+    delete noeud;
+    noeud = nullptr;
+}
+
+template <class T>
+void ArbreAVL<T>::copier(const Noeud *source, Noeud *&noeud) const
+{
+	if (source != nullptr)
+	{
+		noeud = new Noeud(source->contenu);
+		copier(source->gauche, noeud->gauche);
+		copier(source->droite, noeud->droite);
+	}
 }
 
 template <class T>
@@ -277,18 +333,6 @@ bool ArbreAVL<T>::inserer(Noeud *&n, const T &e)
 		n->contenu = e;
 		return false;
 	}
-}
-
-template <class T>
-void ArbreAVL<T>::inserer(const T &e)
-{
-	inserer(racine, e);
-}
-
-template <class T>
-void ArbreAVL<T>::enlever(const T &e)
-{
-	enlever(racine, e);
 }
 
 template <class T>
@@ -366,83 +410,37 @@ bool ArbreAVL<T>::enlever(Noeud *&noeud, const T &element)
     }
 }
 
-
 template <class T>
-ArbreAVL<T> &ArbreAVL<T>::operator=(const ArbreAVL &autre)
+void ArbreAVL<T>::rotationDroiteGauche(Noeud *&B)
 {
-	if (this == &autre)
-	{
-		return *this;
-	}
-	vider();
-	copier(autre.racine, racine);
-	return *this;
+	Noeud *temp = B->droite;
+    int eb = temp->equilibre;
+    int ea = B->equilibre;
+    int nea = -(eb < 0 ? eb : 0) + 1 + ea;
+    int neb = (nea > 0 ? nea : 0) + 1 + eb;
+
+    temp->equilibre = neb;
+    B->equilibre = nea;
+    B->droite = temp->gauche;
+    temp->gauche = B;
+    B = temp;
 }
 
 template <class T>
-bool ArbreAVL<T>::operator==(const ArbreAVL<T> &autre) const
+void ArbreAVL<T>::rotationGaucheDroite(Noeud *&B)
 {
-	Iterateur iter1(this->debut());
-	Iterateur iter2(autre.debut());
-	while (iter1 && iter2)
-	{
-		if((*this)[iter1] != autre[iter2])
-		{
-			return false;
-		}
-		iter1++;
-		iter2++;
-	}
-	if(!iter1 && !iter2)
-	{
-		return true;
-	}
-	return false;
-}
+ 	Noeud *a = B->gauche;
+    Noeud *b = B;
+    int ea = a->equilibre;
+    int eb = b->equilibre;
+    int neb = -(ea > 0 ? ea : 0) - 1 + eb;
+    int nea = ea + (neb < 0 ? neb : 0) - 1;
 
-template <class T>
-typename ArbreAVL<T>::Iterateur ArbreAVL<T>::debut() const
-{
-	Iterateur iter(*this);
-	iter.courant = racine;
-	if (iter.courant != nullptr)
-	{
-		while (iter.courant->gauche != nullptr)
-		{
-			iter.chemin.empiler(iter.courant);
-			iter.courant = iter.courant->gauche;
-		}
-	}
-	return iter;
-}
-
-template <class T>
-T &ArbreAVL<T>::operator[](const Iterateur &i)
-{
-	assert(&i.arbre_associe == this);
-	assert(i.courant);
-	return i.courant->contenu;
-}
-
-template <class T>
-const T &ArbreAVL<T>::operator[](const Iterateur &i) const
-{
-	assert(&i.arbre_associe == this);
-	assert(i.courant);
-	return i.courant->contenu;
-}
-
-/************ Fonctions privées ***************/
-
-template <class T>
-void ArbreAVL<T>::copier(const Noeud *source, Noeud *&noeud) const
-{
-	if (source != nullptr)
-	{
-		noeud = new Noeud(source->contenu);
-		copier(source->gauche, noeud->gauche);
-		copier(source->droite, noeud->droite);
-	}
+    a->equilibre = nea;
+    b->equilibre = neb;
+    b->gauche = a->droite;
+    a->droite = b;
+    B = a;
 }
 
 /************ Iterateur ***************/
