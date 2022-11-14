@@ -386,7 +386,7 @@ bool ArbreAVL<T>::operator==(const ArbreAVL<T> &autre) const
 	Iterateur iter2(autre.debut());
 	while (iter1 && iter2)
 	{
-		if(iter1.courant != iter2.courant)
+		if((*this)[iter1] != autre[iter2])
 		{
 			return false;
 		}

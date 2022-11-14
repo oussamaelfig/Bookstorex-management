@@ -89,7 +89,15 @@ bool Librairie::contient(const Livre & l) const {
 int Librairie::total(Livre & l) const {
 	if(lib.contient(l))
 	{
-		//voir avec test si c'est ce qui est attendu ou total de l'arbre.
+		ArbreAVL<Livre>::Iterateur iter(lib.debut());
+		while (iter)
+		{
+			if(lib[iter] == l)
+			{
+				return lib[iter].copies();
+			}
+			iter++;
+		}
 		return l.copies();
 	}
 	return 0;
