@@ -382,10 +382,8 @@ ArbreAVL<T> &ArbreAVL<T>::operator=(const ArbreAVL &autre)
 template <class T>
 bool ArbreAVL<T>::operator==(const ArbreAVL<T> &autre) const
 {
-	Iterateur iter1(*this);
-	iter1 = debut();
-	Iterateur iter2(autre);
-	iter2 = debut();
+	Iterateur iter1(this->debut());
+	Iterateur iter2(autre.debut());
 	while (iter1 && iter2)
 	{
 		if(iter1.courant != iter2.courant)
