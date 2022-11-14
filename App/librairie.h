@@ -95,8 +95,7 @@ int Librairie::total(Livre & l) const {
 Livre Librairie::trouver(unsigned long l) const {
 	Livre livre1(l);
 	Livre livre2;
-	/*ArbreAVL<Livre>::Iterateur iter(lib);
-	iter = lib.debut(); //erreur weird
+	ArbreAVL<Livre>::Iterateur iter(lib.debut());
 	while (iter)
 	{
 		if(livre1 == lib[iter])
@@ -104,16 +103,23 @@ Livre Librairie::trouver(unsigned long l) const {
 			return lib[iter];
 		}
 		iter++;
-	}*/
+	}
 	return livre2;
 }
 
 void Librairie::fusionner(Librairie & bib) {
-	// À compléter
+	ArbreAVL<Livre>::Iterateur iter(bib.lib.debut());
+	// On parcours chaque element de l'abre bib.lib --> complexite de O(m)
+	while (iter)
+	{
+		//insertion se fait en O(log(n))
+		lib.inserer(bib.lib[iter]);
+		iter++;
+	}
+	//O(mlogn(n))
 }
 
 bool Librairie::operator == (const Librairie & autre) const {
-
   return (*this)==autre;
 }
 
